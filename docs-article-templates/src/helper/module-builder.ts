@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColumn, window, workspace } from "vscode";
+import { MessageOptions, QuickPickItem, QuickPickOptions, TextDocumentShowOptions, Uri, ViewColumn, window, workspace } from "vscode";
 import { output } from "../extension";
 import { formatLearnNames } from "../helper/common";
 import { getUnitName, unitList } from "../helper/unit-builder";
@@ -72,11 +72,23 @@ export function createModuleDirectory() {
     modulePath = join(repoRoot, parentFolder, formattedModuleName);
     if (!existsSync(modulePath)) {
         mkdirSync(modulePath);
+        includesDirectory = join(modulePath, "includes");
+        mkdirSync(includesDirectory);
+        mkdirSync(join(modulePath, "media"));
+        getUnitName();
+    } else {
+        includesDirectory = join(modulePath, "includes");
+        updateExistingModule();
     }
-    includesDirectory = join(modulePath, "includes");
-    mkdirSync(includesDirectory);
-    mkdirSync(join(modulePath, "media"));
-    getUnitName();
+}
+
+export function updateExistingModule() {
+    const options: MessageOptions = {modal: true};
+    window.showInformationMessage(`The module '${formattedModuleName}' already exists.  Would you like to add a unit?`, options, "Yes", "No").then((result) => {
+        if (result === "Yes") {
+            getUnitName();
+        }
+    });
 }
 
 // data used to create the module yml file.
@@ -123,7 +135,7 @@ export function cleanupModule(generatedModule: string) {
             preserveFocus: false,
             preview: false,
             viewColumn: ViewColumn.One,
-          };
+        };
         window.showTextDocument(uri, options);
     } catch (error) {
         output.appendLine(error);

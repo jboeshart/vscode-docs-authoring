@@ -81,8 +81,10 @@
     "@types/node-dir": "0.0.32",
     "download-git-repo": "^1.0.2",
     "front-matter": "^3.0.1",
+    "js-yaml": "^3.12.2",
     "node-dir": "^0.1.17",
     "octicons": "^4.4.0",
+    "read-data": "^1.1.0",
     "write-yaml": "^1.0.0"
   },
   "devDependencies": {
